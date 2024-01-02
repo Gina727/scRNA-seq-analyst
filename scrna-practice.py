@@ -1,6 +1,6 @@
 import scanpy as sc
 #pip install scvi-tools
-#!pip install leidenalg
+#pip install leidenalg
 import scvi
 import pandas as pd
 import numpy as np
@@ -96,9 +96,67 @@ markers = markers[(markers.pvals_adj < 0.05) & (markers.logfoldchanges > .5)]
 markers_scvi = model.differential_expression(groupby = 'leiden')
 markers_scvi = markers_scvi[(markers_scvi['is_de_fdr_0.05']) & (markers_scvi.lfc_mean > .5)]
 sc.pl.umap(adata, color = ['leiden'], frameon = False, legend_loc = "on data")
-#...
 
-# Differential expression graph
+## Prepare dataset for annotation
+### load library and your query datasets: 
+import scanpy as sc
+import pandas as pd
+adata = sc.read('integrated.h5ad')
+
+### Calculate the average gene expression within each cluster
+### we assume that the raw counts are stored in adata.raw.X
+### the cluster information stored in adata.obs['cluster']: 
+### the gene_names stored in adata.var_names
+### the cell name stored in adata.obs_names
+### the 2 dimension UMAPs strored in adata.obsm['X_umap']
+### parameter: sample_name(character): names of this sample, such as "Liver_1"
+
+def cluster_average(adata,sample_name):
+  cluster_df = adata.obs['cluster']
+  gene_names = adata.var_names
+  cell_names = adata.obs_names
+  mat_df=pd.DataFrame.sparse.from_spmatrix(adata.raw.X)
+  ####
+  row_annotations = np.array(cluster_df)
+  unique_annotations = np.unique(row_annotations)
+  ####
+  merged_matrix = np.zeros((len(unique_annotations), mat_df.shape[1]))
+  ####
+  mat_df_mat = np.array(mat_df)
+  for i, annotation in enumerate(unique_annotations):
+    ###
+    rows_to_sum = (row_annotations == annotation)
+    rows_to_sum_mat = mat_df_mat[rows_to_sum,:]
+    ###
+    sum_rows = np.sum(rows_to_sum_mat, axis=0)
+    sum_rows_norm = sum_rows / np.sum(sum_rows) * 1e5
+    sum_rows_log = np.log(sum_rows_norm+1)
+    ###
+    merged_matrix[i, :] = sum_rows_log
+  #### output to csv #####
+  df_log = pd.DataFrame(merged_matrix.T)
+  df_log.columns = unique_annotations
+  df_log.index = gene_names
+  df_log.insert(0,"GENE",df_log.index)
+  ####
+  df_log = df_log.round(3)
+  Output_Step1_name = sample_name + '_CellAnn_Step1_input.txt'
+  df_log.to_csv(Output_Step1_name, index=False,sep='\t')
+  ####
+  df_umap = pd.DataFrame(adata.obsm['X_umap'])
+  df_umap.columns = ["dim1","dim2"]
+  df_umap.insert(0,"cell",cell_names)
+  df_umap.insert(1,"cluster",row_annotations)
+  Output_Step4_name = sample_name + '_CellAnn_Step4_input.txt'
+  df_umap.to_csv(Output_Step4_name, index=False,sep='\t')
+
+### run cluster_average with your adata to get the input of step1 and step4:
+cluster_average(adata,sample_name="your_sample_name")
+
+# Differential expression heatmap
+
+# Violin plots
+
 
 
 
