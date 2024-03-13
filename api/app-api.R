@@ -1,5 +1,8 @@
 library(plumber)
 
+shell_script <- "./test.sh"
+system(paste("sh", shell_script))
+
 #* @apiTitle Plumber scRNA-seq api
 
 # plumber.R
