@@ -6,6 +6,8 @@ RUN R -e "install.packages('Seurat')"
 RUN R -e "install.packages('HGNChelper')"
 RUN apt-get update
 
+CMD Rscript /app-api/requirement.R
+
 COPY / /
 
 EXPOSE 80
