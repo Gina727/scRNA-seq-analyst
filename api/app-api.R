@@ -1,20 +1,8 @@
 library(plumber)
 
-#* @plumber
-function(pr) {
-  pr |> pr_set_debug(TRUE)
-}
-
 #* @apiTitle Plumber scRNA-seq api
 
-# plumber.R
-
-  library(rsconnect)
-  library(SingleCellExperiment)
   library(Seurat)
-  library(tidyverse)
-  library(RCurl)
-  library(writexl)
   library(HGNChelper)
   # load gene set preparation function
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
