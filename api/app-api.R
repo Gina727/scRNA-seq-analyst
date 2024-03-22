@@ -12,18 +12,12 @@ library(plumber)
 
 uploaded_file <- NULL
 
-parser_seurat_rds <- function(...) {
-  parser_read_file(function(tmpfile) { LoadSeuratRds(tmpfile, ...) })
-}
-
-register_parser("rds", parser_seurat_rds, fixed = "application/rds")
-
 #* @param f:file
 #* @parser multi
 #* @parser rds
 #* @post /upload_files
 #* @serializer print
-function(f) {
+upload_files <- function(f) {
   uploaded_file <<- f[[1]]
   f
 }
