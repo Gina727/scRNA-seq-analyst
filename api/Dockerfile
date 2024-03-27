@@ -1,17 +1,17 @@
 FROM rstudio/plumber
 
-RUN R -e "install.packages('plumber')"
-RUN R -e "install.packages('SingleCellExperiment')"
-RUN R -e "install.packages('Seurat')"
-RUN R -e "install.packages('SeuratObject')"
-RUN R -e "install.packages('HGNChelper')"
-RUN apt-get update
-RUN apt-get install -y libglpk40
+# 安装依赖的系统库
+RUN apt-get update && \
+    apt-get install -y libglpk40 libcurl4-openssl-dev libssl-dev libxml2-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-CMD Rscript /app-api/requirement.R
+RUN R -e "install.packages(c('devtools', 'remotes'))"
+RUN R -e "remotes::install_version('SeuratObject', version = '5.0.1')"
+RUN R -e "install.packages(c('SingleCellExperiment', 'Seurat', 'HGNChelper'), dependencies=TRUE)"
 
-COPY / /
+COPY / / 
 
-EXPOSE 80
+EXPOSE 8000
 
-ENTRYPOINT ["Rscript", "app-api.R"]
+CMD ["app-api.R"]
+
