@@ -1,0 +1,10 @@
+services:
+  app:
+    image: new-api:latest
+    ports:
+      - 127.0.0.1:8000:8000
+    working_dir: /app-api
+    volumes:
+      - ./:/app-api
+    environment:
+      - userKey=NULL
