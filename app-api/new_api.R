@@ -24,7 +24,7 @@ key <- NULL
 #* @parser rds
 #* @post /upload_files
 #* @serializer print
-#* @apiDescription This api is used for client to upload .RDS file, load the Seurat object, and tag it with unique key for identification
+#* @tag "This api is used for client to upload .RDS file, load the Seurat object, and tag it with unique key for identification"
 function(f, req, res) {
   key <- req$HTTP_KEY
   file_name <- paste0(key, '.RDS')
@@ -37,7 +37,7 @@ function(f, req, res) {
 #* show quality control
 #* @post /qcplot
 #* @serializer png
-#* @apiDescription This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
+#* @tag "This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.""
 qcplot <- function(req, res){
   seurat_obj <- readRDS(paste0(key, ".RDS"))
   if(is.null(seurat_obj)){
@@ -57,7 +57,7 @@ qcplot <- function(req, res){
 #* quality control
 #* @serializer print
 #* @get /qc
-#* @apiDescription This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
+#* @tag "This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes"
 qc <- function(min.features, max.features, max.mtpercent){
   seurat_obj <- readRDS(paste0(key, "qcplot-", ".RDS"))
   min.features <- as.numeric(min.features)
@@ -72,7 +72,7 @@ qc <- function(min.features, max.features, max.mtpercent){
 #* normalization and run PCA reduction
 #* @serializer png
 #* @post /norm_pca
-#* @apiDescription This api is used for normalization and pca reduction so that the expression matrix can be normalized and find top variable genes. PCA reduction is then used to reduce multidimensional matrix to a 2D graph. 
+#* @tag "This api is used for normalization and pca reduction so that the expression matrix can be normalized and find top variable genes. PCA reduction is then used to reduce multidimensional matrix to a 2D graph.""
 norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
 
   seurat_obj <- readRDS(paste0(key, "-qc", ".RDS"))
@@ -99,7 +99,7 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
 
 #* clustering_umap
 #* @post /clustering_umap
-#* @apiDescription This api is used for clustering (with UMAP visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
+#* @tag "This api is used for clustering (with UMAP visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)"
 clustering_umap <- function(dim, resolution, res){
   
   seurat_obj <- readRDS(paste0(key,"-norm_pca",".RDS"))
@@ -120,7 +120,7 @@ clustering_umap <- function(dim, resolution, res){
 #* clustering_tsne
 #* @serializer png
 #* @post /clustering_tsne
-#* @apiDescription This api is used for clustering (with t-SNE visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
+#* @tag "This api is used for clustering (with t-SNE visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)"
 clustering_tsne <- function(dims, resolution, res){
   seurat_obj <- readRDS(paste0(key, "-norm_pca", ".RDS"))
 
@@ -143,7 +143,7 @@ clustering_tsne <- function(dims, resolution, res){
 #* annotation_sctype_umap
 #* @serializer png
 #* @post /annotation_sctype_umap
-#* @apiDescription This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. UMAP is used for visualization.
+#* @tag "This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. UMAP is used for visualization."
 annotation_sctype_umap <- function(tissue, res){
 
   seurat_obj <- readRDS(paste0(key, "-clustering_umap", ".RDS"))
@@ -181,7 +181,7 @@ annotation_sctype_umap <- function(tissue, res){
 #* annotation_sctype_tsne
 #* @serializer png
 #* @post /annotation_sctype_tsne
-#* @apiDescription This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. t-SNE is used for visualization.
+#* @tag "This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. t-SNE is used for visualization."
 annotation_sctype_tsne <- function(tissue, res){
 
   seurat_obj <- readRDS(paste0(key, "-clustering_tsne", ".RDS"))
