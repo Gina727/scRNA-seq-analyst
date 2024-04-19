@@ -19,20 +19,41 @@ uploaded_file <- NULL
 library(uuid)
 key <- NULL
 
-#* @param f:file
-#* @parser multi
-#* @parser rds
-#* @post /upload_files
-#* @serializer print
-#* This api is used for client to upload .RDS file, load the Seurat object, and tag it with unique key for identification
-function(f, req, res) {
-  key <- req$HTTP_KEY
-  file_name <- paste0(key, '.RDS')
-  uploaded_file <<- f[[1]]
-  SaveSeuratRds(uploaded_file, file = file_name)
-  key <<- key
+#* @get /check_files
+#* This api is used to check the files in the directory and return the latest stage
+check_files <- function(req, res){
+    key <- req$HTTP_KEY
+    files <- list.files("./")
+    stages <- c("annotation_umap", "clustering_umap", "norm_pca", "qc", "qcplot")
+    counts <- rep(0, length(stages))
+    names(counts) <- stages
+
+    for (file_name in files){
+        if (grepl(key, file_name)){
+            for (stage in stages){
+                if (grepl(stage, file_name)){
+                    counts[stage] <- counts[stage] + 1
+                }
+            }
+        }
+    }
+
+    if (any(counts > 0)){
+        print(names(counts)[which.max(counts)])
+    } else {
+        print("upload")
+    }
 }
 
+#* @param link:str
+#* @post /url
+#* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
+function(link, req, res){
+  url <- link
+  key <- req$HTTP_KEY
+  destfile <- paste0("./", key, ".RDS")
+  download.file(url, destfile)
+}
 
 #* @post /qcplot
 #* @serializer png
