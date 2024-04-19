@@ -24,7 +24,7 @@ key <- NULL
 #* @parser rds
 #* @post /upload_files
 #* @serializer print
-# add header 
+#* @apiDescription This api is used for client to upload .RDS file, load the Seurat object, and tag it with unique key for identification
 function(f, req, res) {
   key <- req$HTTP_KEY
   file_name <- paste0(key, '.RDS')
@@ -37,7 +37,7 @@ function(f, req, res) {
 #* show quality control
 #* @post /qcplot
 #* @serializer png
-# find local folder 
+#* @apiDescription This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
 qcplot <- function(req, res){
   seurat_obj <- readRDS(paste0(key, ".RDS"))
   if(is.null(seurat_obj)){
@@ -45,7 +45,7 @@ qcplot <- function(req, res){
   }
   seurat_obj[["percent.mt"]] <- PercentageFeatureSet(seurat_obj, pattern = "^MT-")
   
-  file_name <- paste0("qcplot-", key, '.RDS')
+  file_name <- paste0(key, "-qcplot", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 
   d = VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
@@ -57,23 +57,25 @@ qcplot <- function(req, res){
 #* quality control
 #* @serializer print
 #* @get /qc
+#* @apiDescription This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
 qc <- function(min.features, max.features, max.mtpercent){
-  seurat_obj <- readRDS(paste0("qcplot-", key, ".RDS"))
+  seurat_obj <- readRDS(paste0(key, "qcplot-", ".RDS"))
   min.features <- as.numeric(min.features)
   max.features <- as.numeric(max.features)
   max.mtpercent <- as.numeric(max.mtpercent)
   seurat_obj <- subset(seurat_obj, subset = nFeature_RNA > min.features & nFeature_RNA < max.features & percent.mt < max.mtpercent)
   
-  file_name <- paste0("qc-", key, '.RDS')
+  file_name <- paste0(key, "-qc", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 }
 
 #* normalization and run PCA reduction
 #* @serializer png
 #* @post /norm_pca
+#* @apiDescription This api is used for normalization and pca reduction so that the expression matrix can be normalized and find top variable genes. PCA reduction is then used to reduce multidimensional matrix to a 2D graph. 
 norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
 
-  seurat_obj <- readRDS(paste0("qc-", key, ".RDS"))
+  seurat_obj <- readRDS(paste0(key, "-qc", ".RDS"))
   scaling_factor <- as.numeric(scaling_factor)
   num_hvgs <- as.numeric(num_hvgs)
 
@@ -90,16 +92,17 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
   d = ElbowPlot(object = seurat_obj, ndims = 40)
   print(d)
 
-  file_name <- paste0("norm_pca-", key, '.RDS')
+  file_name <- paste0(key,"-norm_pca", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
   res$setHeader("X-API-KEY", key)
 }
 
 #* clustering_umap
 #* @post /clustering_umap
+#* @apiDescription This api is used for clustering (with UMAP visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
 clustering_umap <- function(dim, resolution, res){
   
-  seurat_obj <- readRDS(paste0("norm_pca-", key, ".RDS"))
+  seurat_obj <- readRDS(paste0(key,"-norm_pca",".RDS"))
 
   dim <- as.numeric(dim)
   resolution <- as.numeric(resolution)
@@ -108,7 +111,7 @@ clustering_umap <- function(dim, resolution, res){
   seurat_obj <- FindClusters(seurat_obj, resolution = resolution)
   seurat_obj <- RunUMAP(seurat_obj, dims = 1:dim)
 
-  file_name <- paste0("clustering_umap-", key, '.RDS')
+  file_name <- paste0(key, "-clustering_umap", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 
   res$setHeader("X-API-KEY", key)
@@ -117,8 +120,9 @@ clustering_umap <- function(dim, resolution, res){
 #* clustering_tsne
 #* @serializer png
 #* @post /clustering_tsne
+#* @apiDescription This api is used for clustering (with t-SNE visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
 clustering_tsne <- function(dims, resolution, res){
-  seurat_obj <- readRDS(paste0("norm_pca-", key, ".RDS"))
+  seurat_obj <- readRDS(paste0(key, "-norm_pca", ".RDS"))
 
   dims <- as.numeric(dims)
   resolution <- as.numeric(resolution)
@@ -127,7 +131,7 @@ clustering_tsne <- function(dims, resolution, res){
   seurat_obj <- FindClusters(seurat_obj, resolution = resolution)
   seurat_obj <- RunTSNE(seurat_obj, dims = 1:dims)
 
-  file_name <- paste0("clustering_tsne-", key, '.RDS')
+  file_name <- paste0(key, "-clustering_tsne", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 
   t = TSNEPlot(seurat_obj)
@@ -139,9 +143,10 @@ clustering_tsne <- function(dims, resolution, res){
 #* annotation_sctype_umap
 #* @serializer png
 #* @post /annotation_sctype_umap
+#* @apiDescription This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. UMAP is used for visualization.
 annotation_sctype_umap <- function(tissue, res){
 
-  seurat_obj <- readRDS(paste0("clustering_umap-", key, ".RDS"))
+  seurat_obj <- readRDS(paste0(key, "-clustering_umap", ".RDS"))
 
   # prepare gene sets
     gs_list = gene_sets_prepare(db_, tissue)
@@ -164,7 +169,7 @@ annotation_sctype_umap <- function(tissue, res){
       seurat_obj@meta.data$customclassif[seurat_obj@meta.data$seurat_clusters == j] = as.character(cl_type$type[1])
     }
 
-    file_name <- paste0("annotation_umap-", key, '.RDS')
+    file_name <- paste0(key, "-annotation_umap", '.RDS')
     SaveSeuratRds(seurat_obj, file = file_name)
 
     d <- DimPlot(seurat_obj, reduction = "umap", label = TRUE, repel = TRUE, group.by = 'customclassif')+ggtitle(tissue)
@@ -176,9 +181,10 @@ annotation_sctype_umap <- function(tissue, res){
 #* annotation_sctype_tsne
 #* @serializer png
 #* @post /annotation_sctype_tsne
+#* @apiDescription This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. t-SNE is used for visualization.
 annotation_sctype_tsne <- function(tissue, res){
 
-  seurat_obj <- readRDS(paste0("clustering_tsne-", key, ".RDS"))
+  seurat_obj <- readRDS(paste0(key, "-clustering_tsne", ".RDS"))
 
   # prepare gene sets
     gs_list = gene_sets_prepare(db_, tissue)
