@@ -46,7 +46,7 @@ check_files <- function(req, res){
 }
 
 #* @param link:str
-#* @post /url
+#* @post /use_url_download_file
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
 function(link, req, res){
   url <- link
