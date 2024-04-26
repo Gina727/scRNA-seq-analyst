@@ -48,9 +48,9 @@ check_files <- function(req, res){
 #* @param link:str
 #* @post /user_url_download
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
-function(link, req, res){
+function(link, key, req, res){
   key <<- req$HTTP_KEY
-  destfile <<- paste0("./", key, ".RDS")
+  destfile <<- paste0("./", sys.user_id, ".RDS")
   download.file(link, destfile)
   destfile
 }
@@ -65,26 +65,24 @@ qcplot <- function(req, res){
   }
   seurat_obj[["percent.mt"]] <- PercentageFeatureSet(seurat_obj, pattern = "^MT-")
   
-  file_name <- paste0(key, "-qcplot", '.RDS')
+  file_name <- paste0(sys.user_id, "-qcplot", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 
   d = VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
   print(d)
-
-  res$setHeader("X-API-KEY", key)
 }
 
 #* @serializer print
 #* @get /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
 qc <- function(min.features, max.features, max.mtpercent){
-  seurat_obj <- readRDS(paste0(key, "-qcplot", ".RDS"))
+  seurat_obj <- readRDS(paste0(sys.user_id, "-qcplot", ".RDS"))
   min.features <- as.numeric(min.features)
   max.features <- as.numeric(max.features)
   max.mtpercent <- as.numeric(max.mtpercent)
   seurat_obj <- subset(seurat_obj, subset = nFeature_RNA > min.features & nFeature_RNA < max.features & percent.mt < max.mtpercent)
   
-  file_name <- paste0(key, "-qc", '.RDS')
+  file_name <- paste0(sys.user_id, "-qc", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 }
 
@@ -93,7 +91,7 @@ qc <- function(min.features, max.features, max.mtpercent){
 #* This api is used for normalization and pca reduction so that the expression matrix can be normalized and find top variable genes. PCA reduction is then used to reduce multidimensional matrix to a 2D graph.
 norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
 
-  seurat_obj <- readRDS(paste0(key, "-qc", ".RDS"))
+  seurat_obj <- readRDS(paste0(sys.user_id, "-qc", ".RDS"))
   scaling_factor <- as.numeric(scaling_factor)
   num_hvgs <- as.numeric(num_hvgs)
 
@@ -110,16 +108,15 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
   d = ElbowPlot(object = seurat_obj, ndims = 40)
   print(d)
 
-  file_name <- paste0(key,"-norm_pca", '.RDS')
+  file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
-  res$setHeader("X-API-KEY", key)
 }
 
 #* @post /clustering_umap
 #* This api is used for clustering (with UMAP visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
 clustering_umap <- function(dim, resolution, res){
   
-  seurat_obj <- readRDS(paste0(key,"-norm_pca",".RDS"))
+  seurat_obj <- readRDS(paste0(sys.user_id,"-norm_pca",".RDS"))
 
   dim <- as.numeric(dim)
   resolution <- as.numeric(resolution)
@@ -128,17 +125,15 @@ clustering_umap <- function(dim, resolution, res){
   seurat_obj <- FindClusters(seurat_obj, resolution = resolution)
   seurat_obj <- RunUMAP(seurat_obj, dims = 1:dim)
 
-  file_name <- paste0(key, "-clustering_umap", '.RDS')
+  file_name <- paste0(sys.user_id, "-clustering_umap", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
-
-  res$setHeader("X-API-KEY", key)
 }
 
 #* @serializer png
 #* @post /clustering_tsne
 #* This api is used for clustering (with t-SNE visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
 clustering_tsne <- function(dims, resolution, res){
-  seurat_obj <- readRDS(paste0(key, "-norm_pca", ".RDS"))
+  seurat_obj <- readRDS(paste0(sys.user_id, "-norm_pca", ".RDS"))
 
   dims <- as.numeric(dims)
   resolution <- as.numeric(resolution)
@@ -147,7 +142,7 @@ clustering_tsne <- function(dims, resolution, res){
   seurat_obj <- FindClusters(seurat_obj, resolution = resolution)
   seurat_obj <- RunTSNE(seurat_obj, dims = 1:dims)
 
-  file_name <- paste0(key, "-clustering_tsne", '.RDS')
+  file_name <- paste0(sys.user_id, "-clustering_tsne", '.RDS')
   SaveSeuratRds(seurat_obj, file = file_name)
 
   t = TSNEPlot(seurat_obj)
@@ -162,7 +157,7 @@ clustering_tsne <- function(dims, resolution, res){
 #* This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. UMAP is used for visualization.
 annotation_sctype_umap <- function(tissue, res){
 
-  seurat_obj <- readRDS(paste0(key, "-clustering_umap", ".RDS"))
+  seurat_obj <- readRDS(paste0(sys.user_id, "-clustering_umap", ".RDS"))
 
   # prepare gene sets
     gs_list = gene_sets_prepare(db_, tissue)
@@ -185,13 +180,11 @@ annotation_sctype_umap <- function(tissue, res){
       seurat_obj@meta.data$customclassif[seurat_obj@meta.data$seurat_clusters == j] = as.character(cl_type$type[1])
     }
 
-    file_name <- paste0(key, "-annotation_umap", '.RDS')
+    file_name <- paste0(sys.user_id, "-annotation_umap", '.RDS')
     SaveSeuratRds(seurat_obj, file = file_name)
 
     d <- DimPlot(seurat_obj, reduction = "umap", label = TRUE, repel = TRUE, group.by = 'customclassif')+ggtitle(tissue)
     print(d)
-
-    res$setHeader("X-API-KEY", key)
 }
 
 #* annotation_sctype_tsne
@@ -200,7 +193,7 @@ annotation_sctype_umap <- function(tissue, res){
 #* This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. t-SNE is used for visualization.
 annotation_sctype_tsne <- function(tissue, res){
 
-  seurat_obj <- readRDS(paste0(key, "-clustering_tsne", ".RDS"))
+  seurat_obj <- readRDS(paste0(sys.user_id, "-clustering_tsne", ".RDS"))
 
   # prepare gene sets
     gs_list = gene_sets_prepare(db_, tissue)
@@ -223,13 +216,11 @@ annotation_sctype_tsne <- function(tissue, res){
       cl_type = sctype_scores[sctype_scores$cluster==j,]; 
       seurat_obj@meta.data$customclassif[seurat_obj@meta.data$seurat_clusters == j] = as.character(cl_type$type[1])
     }
-    file_name <- paste0("annotation_tsne", key, '.RDS')
+    file_name <- paste0(sys.user_id, "-annotation_tsne", '.RDS')
     SaveSeuratRds(seurat_obj, file = file_name)
 
     b = TSNEPlot(seurat_obj, group.by = 'customclassif')+ggtitle(tissue)
     print(b)
-
-    res$setHeader("X-API-KEY", key)
 }
 
 # download
