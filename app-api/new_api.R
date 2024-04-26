@@ -14,6 +14,7 @@ library(plumber)
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/sctype_score_.R")
   db_ = "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx"
 
+sys.user_id <- NULL
 uploaded_file <- NULL 
 destfile <- NULL
 library(uuid)
@@ -49,6 +50,7 @@ check_files <- function(req, res){
 #* @post /user_url_download
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
 function(link, sys.user_id, req, res){
+  sys.user_id <<- sys.user_id
   destfile <<- paste0("./", sys.user_id, ".RDS")
   download.file(link, destfile)
   destfile
