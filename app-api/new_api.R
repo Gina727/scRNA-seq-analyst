@@ -15,7 +15,7 @@ library(plumber)
   db_ = "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx"
 
 uploaded_file <- NULL 
-
+destfile <- NULL
 library(uuid)
 key <- NULL
 
@@ -46,20 +46,20 @@ check_files <- function(req, res){
 }
 
 #* @param link:str
-#* @post /use_url_download_file
+#* @post /user_url_download
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
 function(link, req, res){
-  url <- link
-  key <- req$HTTP_KEY
-  destfile <- paste0("./", key, ".RDS")
-  download.file(url, destfile)
+  key <<- req$HTTP_KEY
+  destfile <<- paste0("./", key, ".RDS")
+  download.file(link, destfile)
+  destfile
 }
 
 #* @post /qcplot
 #* @serializer png
 #* This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
 qcplot <- function(req, res){
-  seurat_obj <- readRDS(paste0(key, ".RDS"))
+  seurat_obj <- readRDS(destfile)
   if(is.null(seurat_obj)){
     stop("No Seurat object uploaded", call. = FALSE)
   }
@@ -78,7 +78,7 @@ qcplot <- function(req, res){
 #* @get /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
 qc <- function(min.features, max.features, max.mtpercent){
-  seurat_obj <- readRDS(paste0(key, "qcplot-", ".RDS"))
+  seurat_obj <- readRDS(paste0(key, "-qcplot", ".RDS"))
   min.features <- as.numeric(min.features)
   max.features <- as.numeric(max.features)
   max.mtpercent <- as.numeric(max.mtpercent)
