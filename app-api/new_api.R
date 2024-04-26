@@ -48,8 +48,8 @@ check_files <- function(req, res){
 #* @param link:str
 #* @post /user_url_download
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
-function(link, file_key, req, res){
-  key <<- file_key
+function(link, req, res){
+  key <<- req$HTTP_KEY
   destfile <<- paste0("./", key, ".RDS")
   download.file(link, destfile)
   destfile
