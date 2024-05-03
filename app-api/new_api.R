@@ -59,7 +59,7 @@ function(link, sys.user_id, req, res){
 #* @serializer png
 #* This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
 qcplot <- function(req, res){
-  seurat_obj <- readRDS("C:/Users/user/Documents/single_cell_rnaseq/app-api/ggg.RDS")
+  seurat_obj <- readRDS(paste0(sys.user_id, ".RDS"))
   if(is.null(seurat_obj)){
     stop("No Seurat object uploaded", call. = FALSE)
   }
