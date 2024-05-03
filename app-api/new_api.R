@@ -14,7 +14,6 @@ library(plumber)
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/sctype_score_.R")
   db_ = "https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/ScTypeDB_full.xlsx"
 
-sys.user_id <- NULL
 uploaded_file <- NULL 
 destfile <- NULL
 library(uuid)
@@ -60,17 +59,18 @@ function(link, sys.user_id, req, res){
 #* @serializer png
 #* This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
 qcplot <- function(req, res){
-  seurat_obj <- readRDS(paste0("./", sys.user_id, ".RDS"))
+  seurat_obj <- readRDS("C:/Users/user/Documents/single_cell_rnaseq/app-api/ggg.RDS")
   if(is.null(seurat_obj)){
     stop("No Seurat object uploaded", call. = FALSE)
   }
   seurat_obj[["percent.mt"]] <- PercentageFeatureSet(seurat_obj, pattern = "^MT-")
   
-  file_name <- paste0(sys.user_id, "-qcplot", '.RDS')
-  SaveSeuratRds(seurat_obj, file = file_name)
+  #file_name <- paste0(sys.user_id, "-qcplot", '.RDS')
+  #SaveSeuratRds(seurat_obj, file = file_name)
 
-  d = VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
-  print(d)
+  d <- VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
+  graph_name = paste0(sys.user_id,"-vlnplot",".png")
+  ggsave(filename = graph_name, plot = d, width = 10, height = 10, dpi = 300)
 }
 
 #* @serializer print
