@@ -65,8 +65,8 @@ qcplot <- function(req, res){
   }
   seurat_obj[["percent.mt"]] <- PercentageFeatureSet(seurat_obj, pattern = "^MT-")
   
-  #file_name <- paste0(sys.user_id, "-qcplot", '.RDS')
-  #SaveSeuratRds(seurat_obj, file = file_name)
+  file_name <- paste0(sys.user_id, "-qcplot", '.RDS')
+  SaveSeuratRds(seurat_obj, file = file_name)
 
   d <- VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
   graph_name = paste0(sys.user_id,"-vlnplot",".png")
