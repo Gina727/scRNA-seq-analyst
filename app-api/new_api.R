@@ -56,7 +56,6 @@ function(link, sys.user_id, req, res){
 }
 
 #* @post /qcplot
-#* @serializer png
 #* This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
 qcplot <- function(req, res){
   seurat_obj <- readRDS(paste0(sys.user_id, ".RDS"))
@@ -71,9 +70,10 @@ qcplot <- function(req, res){
   d <- VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
   graph_name = paste0(sys.user_id,"-vlnplot",".png")
   ggsave(filename = graph_name, plot = d, width = 10, height = 10, dpi = 300)
+
+  return(graph_name)
 }
 
-#* @serializer print
 #* @get /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
 qc <- function(min.features, max.features, max.mtpercent){
