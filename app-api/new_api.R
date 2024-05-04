@@ -69,10 +69,15 @@ qcplot <- function(req, res){
 
   d <- VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
   graph_name = paste0(sys.user_id,"-vlnplot",".png")
-  ggsave(filename = graph_name, plot = d, width = 10, height = 10, dpi = 300)
+  ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
   return(graph_name)
 }
+# Handler for loading picture, response resource type what
+# Define response type
+# Human check
+# Test ai 
+# How to show pic? Render session
 
 #* @get /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
