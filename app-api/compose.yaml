@@ -1,10 +1,13 @@
+version: '3.8'
+
 services:
   app:
     image: new-api:latest
     ports:
-      - 0.0.0.0:8000:8000
+      - "0.0.0.0:8000:8000"
     working_dir: /app-api
     volumes:
       - ./:/app-api
+      - ./images:/app-api/images
     environment:
       - userKey=NULL
