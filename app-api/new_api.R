@@ -72,7 +72,7 @@ qcplot <- function(req, res){
   graph_name = paste0(sys.user_id,"-vlnplot",".png")
   ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
-  list(success = true, message = (content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = true))
+  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 }
 # Handler for loading picture, response resource type what
 # Define response type
