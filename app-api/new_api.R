@@ -72,7 +72,7 @@ qcplot <- function(req, res){
   graph_name = paste0(sys.user_id,"-vlnplot",".png")
   ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
-  list(status = "SUCCESS", code = "200", output = list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name)))
+  list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
 }
 # Handler for loading picture, response resource type what
 # Define response type
@@ -119,7 +119,7 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
   file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
   SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
 
-  list(status = "SUCCESS", code = "200", output = list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name)))
+  list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
 }
 
 #* @post /clustering_umap
@@ -191,7 +191,7 @@ annotation_sctype_umap <- function(tissue, res){
     graph_name = paste0(sys.user_id,"-annotation_umap",".png")
     ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
-    list(status = "SUCCESS", code = "200", output = list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name)))
+    list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
 }
 
 #* annotation_sctype_tsne
@@ -230,7 +230,7 @@ annotation_sctype_tsne <- function(tissue, res){
     graph_name = paste0(sys.user_id,"-annotation_tsne",".png")
     ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
-    list(status = "SUCCESS", code = "200", output = list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name)))
+    list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
 }
 
 # download
