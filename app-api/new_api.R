@@ -119,7 +119,7 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
   file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
   SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
 
-  list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
+  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 }
 
 #* @post /clustering_umap
@@ -191,7 +191,7 @@ annotation_sctype_umap <- function(tissue, res){
     graph_name = paste0(sys.user_id,"-annotation_umap",".png")
     ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
-    list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
+    list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 }
 
 #* annotation_sctype_tsne
@@ -230,7 +230,6 @@ annotation_sctype_tsne <- function(tissue, res){
     graph_name = paste0(sys.user_id,"-annotation_tsne",".png")
     ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
-    list(type = "image", content = paste0("http://scrna.m2mda.com/images/", graph_name))
-}
+    list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 
 # download
