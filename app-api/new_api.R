@@ -79,7 +79,7 @@ qcplot <- function(sys.user_id, req, res){
 # Test ai 
 # How to show pic? Render session
 
-#* @get /qc
+#* @post /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
 qc <- function(min.features, max.features, max.mtpercent, sys.user_id){
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-qcplot", ".RDS")))
