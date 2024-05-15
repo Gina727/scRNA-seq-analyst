@@ -49,7 +49,6 @@ check_files <- function(req, res){
 #* @post /user_url_download
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
 function(link, sys.user_id, req, res){
-  sys.user_id <<- sys.user_id
   destfile <<- paste0("./", sys.user_id, ".RDS")
   download.file(link, file.path("rds", destfile))
   destfile
@@ -58,7 +57,7 @@ function(link, sys.user_id, req, res){
 #* @post /qcplot
 #* @serializer unboxedJSON
 #* This api is used to analyze the percentage of mitochondria gene, distribution of number of gene and cells, and plot a violin graph for quality control.
-qcplot <- function(req, res){
+qcplot <- function(sys.user_id, req, res){
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, ".RDS")))
   if(is.null(seurat_obj)){
     stop("No Seurat object uploaded", call. = FALSE)
@@ -82,7 +81,7 @@ qcplot <- function(req, res){
 
 #* @get /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
-qc <- function(min.features, max.features, max.mtpercent){
+qc <- function(min.features, max.features, max.mtpercent, sys.user_id){
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-qcplot", ".RDS")))
   min.features <- as.numeric(min.features)
   max.features <- as.numeric(max.features)
@@ -96,7 +95,7 @@ qc <- function(min.features, max.features, max.mtpercent){
 #* @serializer unboxedJSON
 #* @post /norm_pca
 #* This api is used for normalization and pca reduction so that the expression matrix can be normalized and find top variable genes. PCA reduction is then used to reduce multidimensional matrix to a 2D graph.
-norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
+norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, sys.user_id, res){
 
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-qc", ".RDS")))
   scaling_factor <- as.numeric(scaling_factor)
@@ -124,7 +123,7 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, res){
 
 #* @post /clustering_umap
 #* This api is used for clustering (with UMAP visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
-clustering_umap <- function(dim, resolution, res){
+clustering_umap <- function(dim, resolution, sys.user_id, res){
   
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id,"-norm_pca",".RDS")))
 
@@ -141,7 +140,7 @@ clustering_umap <- function(dim, resolution, res){
 
 #* @post /clustering_tsne
 #* This api is used for clustering (with t-SNE visualization) the Seurat object with client's parameter input, dim , which is chosen from the previous elbow plot, and resolution, the extent of how many clusters will be generated (high resolution: more clusters)
-clustering_tsne <- function(dims, resolution, res){
+clustering_tsne <- function(dims, resolution, sys.user_id, res){
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-norm_pca", ".RDS")))
 
   dims <- as.numeric(dims)
@@ -159,7 +158,7 @@ clustering_tsne <- function(dims, resolution, res){
 #* @serializer unboxedJSON
 #* @post /annotation_sctype_umap
 #* This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. UMAP is used for visualization.
-annotation_sctype_umap <- function(tissue, res){
+annotation_sctype_umap <- function(tissue, sys.user_id, res){
 
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-clustering_umap", ".RDS")))
 
@@ -198,7 +197,7 @@ annotation_sctype_umap <- function(tissue, res){
 #* @serializer unboxedJSON
 #* @post /annotation_sctype_tsne
 #* This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. t-SNE is used for visualization.
-annotation_sctype_tsne <- function(tissue, res){
+annotation_sctype_tsne <- function(tissue, sys.user_id, res){
 
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-clustering_tsne", ".RDS")))
 
@@ -231,5 +230,5 @@ annotation_sctype_tsne <- function(tissue, res){
     ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
     list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
-
+}
 # download
