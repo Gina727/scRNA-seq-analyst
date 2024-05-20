@@ -1,13 +1,16 @@
 library(plumber)
 
 #* @apiTitle scRNA-seq api
-
+  install.packages(c('devtools', 'remotes'))
+  # remotes::install_github('mojaveazure/seurat-disk')
+  # devtools::install_github('satijalab/seurat-data')
   library(Seurat)
   library(HGNChelper)
   library(SeuratObject)
   library(dplyr)
   library(ggplot2)
   library(openxlsx)
+  library(SeuratDisk)
   library(SeuratData)
   # load gene set preparation function
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
@@ -52,23 +55,22 @@ check_files <- function(req, res){
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
 function(link, sys.user_id, req, res){
   destfile <- paste0("./", sys.user_id, ".RDS")
-  if (grepl("\\.rds$", tolower(basename(link)))) {
+  if (grepl(".rds", tolower(basename(link)))) {
     download.file(link, file.path("rds", destfile))
-  } else if (grepl("\\.csv$", tolower(basename(link)))) {
+  } else if (grepl(".csv", tolower(basename(link)))) {
     counts.data <- read.csv(url(link))
     counts <- CreateSeuratObject(counts = counts.data)
     SaveSeuratRds(counts, file.path("rds", destfile))
-  } else if (grepl("\\.h5ad$", tolower(basename(link)))) {
+  } else if (grepl(".h5ad", tolower(basename(link)))) {
     Convert(url(link), ".h5seurat")
     counts <- LoadH5Seurat(url(link))
     SaveSeuratRds(counts, file.path("rds", destfile))
-  } else if (grepl("\\.h5seurat", tolower(basename(link)))) {
+  } else if (grepl(".h5seurat", tolower(basename(link)))) {
     counts <- LoadH5Seurat(url(link))
     SaveSeuratRds(counts, file.path("rds", destfile))
   } else {
      print("not accepted file type")
   }
-  destfile
 }
 
 #* @post /qcplot
