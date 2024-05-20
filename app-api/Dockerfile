@@ -12,6 +12,7 @@ RUN R -e "install.packages(c('SingleCellExperiment', 'Seurat', 'HGNChelper','dpl
 RUN R -e "install.packages(c('openxlsx'))"
 RUN R -e "devtools::install_github('hhoeflin/hdf5r')"
 RUN R -e "remotes::install_github('mojaveazure/seurat-disk')"
+
 RUN R -e "devtools::install_github('satijalab/seurat-data')"
 COPY / / 
 
