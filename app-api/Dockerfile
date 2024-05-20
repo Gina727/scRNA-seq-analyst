@@ -1,7 +1,7 @@
 FROM rstudio/plumber
 
 RUN apt-get update && \
-    apt-get install -y libglpk40 libcurl4-openssl-dev libssl-dev libxml2-dev && \
+    apt-get install -y libglpk40 libcurl4-openssl-dev libssl-dev libxml2-dev libhdf5-dev&& \
     rm -rf /var/lib/apt/lists/*
 
 RUN R -e "install.packages(c('devtools', 'remotes'))"
