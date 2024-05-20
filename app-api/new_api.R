@@ -8,7 +8,6 @@ library(plumber)
   library(dplyr)
   library(ggplot2)
   library(openxlsx)
-  library(SeuratDisk)
   library(SeuratData)
   # load gene set preparation function
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
