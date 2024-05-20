@@ -9,7 +9,7 @@ RUN R -e "install.packages(c('devtools', 'remotes'))"
 RUN R -e "remotes::install_version('SeuratObject', version = '5.0.1')"
 
 RUN R -e "install.packages(c('SingleCellExperiment', 'Seurat', 'HGNChelper','dplyr','ggplot2'), dependencies=TRUE)"
-RUN R -e "install.packages(c('openxlsx'))"
+RUN R -e "install.packages(c('openxlsx','SeuratDisk','SeuratData'))"
 COPY / / 
 
 EXPOSE 8000
