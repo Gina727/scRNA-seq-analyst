@@ -8,6 +8,7 @@ library(plumber)
   library(dplyr)
   library(ggplot2)
   library(openxlsx)
+  library(SeuratDisk)
   # load gene set preparation function
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
   # load cell type annotation function
@@ -18,6 +19,7 @@ uploaded_file <- NULL
 destfile <- NULL
 library(uuid)
 key <- NULL
+
 
 #* @get /check_files
 #* This api is used to check the files in the directory and return the latest stage
@@ -49,8 +51,23 @@ check_files <- function(req, res){
 #* @post /user_url_download
 #* This api is used to download the file uploaded by the client to the same directory of this R script on the server.
 function(link, sys.user_id, req, res){
-  destfile <<- paste0("./", sys.user_id, ".RDS")
-  download.file(link, file.path("rds", destfile))
+  destfile <- paste0("./", sys.user_id, ".RDS")
+  if (grepl("\\.rds$", tolower(basename(link)))) {
+    download.file(link, file.path("rds", destfile))
+  } else if (grepl("\\.csv$", tolower(basename(link)))) {
+    counts.data <- read.csv(url(link))
+    counts <- CreateSeuratObject(counts = counts.data)
+    SaveSeuratRds(counts, file.path("rds", destfile))
+  } else if (grepl("\\.h5ad$", tolower(basename(link)))) {
+    Convert(url(link), ".h5seurat")
+    counts <- LoadH5Seurat(url(link))
+    SaveSeuratRds(counts, file.path("rds", destfile))
+  } else if (grepl("\\.h5seurat", tolower(basename(link)))) {
+    counts <- LoadH5Seurat(url(link))
+    SaveSeuratRds(counts, file.path("rds", destfile))
+  } else {
+     print("not accepted file type")
+  }
   destfile
 }
 
