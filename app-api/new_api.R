@@ -9,6 +9,7 @@ library(plumber)
   library(dplyr)
   library(ggplot2)
   library(openxlsx)
+  library(SeuratData)
   default_dataset_list = list("pbmc3k", "panc8", "kidneyref", "adiposeref", "lungref")
   for (dataset in default_dataset_list) {
      if (dataset %in% AvailableData() == FALSE){
@@ -83,7 +84,7 @@ function(link, sys.user_id, req, res){
 #* @serializer unboxedJSON
 #* @post /default_dataset
 function(dataset_name, req, res) {
-  destfile_default <- paste0("./", sys.user_id, dataset_name, ".RDS")
+  destfile_default <- paste0("./", sys.user_id, ".RDS")
   counts <- data(dataset_name)
   SaveSeuratRds(counts, file.path("rds", destfile))
 }
