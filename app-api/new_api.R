@@ -19,7 +19,6 @@ library(plumber)
 
 uploaded_file <- NULL 
 destfile <- NULL
-library(uuid)
 key <- NULL
 
 
