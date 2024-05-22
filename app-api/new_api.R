@@ -67,7 +67,7 @@ function(link, sys.user_id, req, res){
     counts <- LoadH5Seurat(url(link))
     SaveSeuratRds(counts, file.path("rds", destfile))
   } else {
-     print("not accepted file type")
+     print("Not accepted file type")
   }
 }
 
@@ -214,7 +214,7 @@ annotation_sctype_umap <- function(tissue, sys.user_id, res){
 #* @serializer unboxedJSON
 #* @post /annotation_sctype_tsne
 #* This api is used for annotating the clustered object with scType algorithm, calculating the sctype score with positive and negative marker gene sets to classify the cell type. t-SNE is used for visualization.
-annotation_sctype_tsne <- function(tissue, sys.user_id, res){
+annotation_sctype_tsne <- function(tissue, title, sys.user_id, res){
 
   seurat_obj <- readRDS(file.path("rds", paste0(sys.user_id, "-clustering_tsne", ".RDS")))
 
@@ -242,7 +242,7 @@ annotation_sctype_tsne <- function(tissue, sys.user_id, res){
     file_name <- paste0(sys.user_id, "-annotation_tsne", '.RDS')
     SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
 
-    b <- TSNEPlot(seurat_obj, group.by = 'customclassif')+ggtitle(tissue)
+    b <- TSNEPlot(seurat_obj, group.by = 'customclassif')+ggtitle(title)
     graph_name = paste0(sys.user_id,"-annotation_tsne",".png")
     ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
 
