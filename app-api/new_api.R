@@ -13,7 +13,7 @@ library(plumber)
   default_dataset_list = list("pbmc3k", "panc8", "kidneyref", "adiposeref", "lungref")
   for (dataset in default_dataset_list) {
      if (dataset %in% AvailableData() == FALSE){
-        Install(dataset)
+        InstallData(dataset)
      }
   }
   # load gene set preparation function
