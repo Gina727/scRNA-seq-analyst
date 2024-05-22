@@ -2,15 +2,19 @@ library(plumber)
 
 #* @apiTitle scRNA-seq api
   install.packages(c('devtools', 'remotes'))
-  # remotes::install_github('mojaveazure/seurat-disk')
-  # devtools::install_github('satijalab/seurat-data')
+  remotes::install_github('mojaveazure/seurat-disk')
+  devtools::install_github('satijalab/seurat-data')
   library(Seurat)
-  library(HGNChelper)
   library(SeuratObject)
   library(dplyr)
   library(ggplot2)
   library(openxlsx)
-  library(SeuratData)
+  default_dataset_list = list("pbmc3k", "panc8", "kidneyref", "adiposeref", "lungref")
+  for (dataset in default_dataset_list) {
+     if (dataset %in% AvailableData() == FALSE){
+        Install(dataset)
+     }
+  }
   # load gene set preparation function
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
   # load cell type annotation function
@@ -55,6 +59,11 @@ function(link, sys.user_id, req, res){
   destfile <- paste0("./", sys.user_id, ".RDS")
   if (grepl(".rds", tolower(basename(link)))) {
     download.file(link, file.path("rds", destfile))
+  } else if (grepl(".tar.gz", tolower(basename(link)))) {
+    download.file(link, destfile="tmp.tar.gz")
+    untar("tmp.tar.gz", exdir = "./temp/")
+    counts.data <- Read10X(data.dir = "./temp")
+    counts <- CreateSeuratObject(counts=)
   } else if (grepl(".csv", tolower(basename(link)))) {
     counts.data <- read.csv(url(link))
     counts <- CreateSeuratObject(counts = counts.data)
@@ -69,6 +78,14 @@ function(link, sys.user_id, req, res){
   } else {
      print("Not accepted file type")
   }
+}
+
+#* @serializer unboxedJSON
+#* @post /default_dataset
+function(dataset_name, req, res) {
+  destfile_default <- paste0("./", sys.user_id, dataset_name, ".RDS")
+  counts <- data(dataset_name)
+  SaveSeuratRds(counts, file.path("rds", destfile))
 }
 
 #* @post /qcplot
@@ -90,11 +107,6 @@ qcplot <- function(sys.user_id, req, res){
 
   list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 }
-# Handler for loading picture, response resource type what
-# Define response type
-# Human check
-# Test ai 
-# How to show pic? Render session
 
 #* @post /qc
 #* This api is used for quality control, selecting desired range of number of genes and cells, and a maximum threshold for mitochondria genes
