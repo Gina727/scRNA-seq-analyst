@@ -86,7 +86,7 @@ function(link, sys.user_id, req, res){
 function(dataset_name, sys.user_id, req, res) {
   seurat_obj <- readRDS(paste0("./", dataset_name, ".rds"))
   SaveSeuratRds(seurat_obj, file = file.path("rds", paste0(sys.user_id, ".RDS")))
-  print("dataset_name")
+  print(dataset_name)
 }
 
 #* @post /qcplot
@@ -261,3 +261,4 @@ annotation_sctype_tsne <- function(tissue, title, sys.user_id, res){
 
     list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 }
+# download
