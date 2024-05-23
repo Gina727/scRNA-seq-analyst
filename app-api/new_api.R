@@ -10,12 +10,12 @@ library(plumber)
   library(ggplot2)
   library(openxlsx)
   library(SeuratData)
-  default_dataset_list = list("pbmc3k", "panc8", "kidneyref", "adiposeref", "lungref")
-  for (dataset in default_dataset_list) {
-     if (dataset %in% AvailableData() == FALSE){
-        InstallData(dataset)
-     }
-  }
+  # default_dataset_list = list("pbmc3k", "panc8", "kidneyref", "adiposeref", "lungref")
+  # for (dataset in default_dataset_list) {
+  #    if (dataset %in% AvailableData() == FALSE){
+  #       InstallData(dataset)
+  #    }
+  # }
   # load gene set preparation function
   source("https://raw.githubusercontent.com/IanevskiAleksandr/sc-type/master/R/gene_sets_prepare.R")
   # load cell type annotation function
@@ -81,12 +81,12 @@ function(link, sys.user_id, req, res){
   }
 }
 
-#* @serializer unboxedJSON
+
 #* @post /default_dataset
-function(dataset_name, req, res) {
-  destfile_default <- paste0("./", sys.user_id, ".RDS")
-  counts <- data(dataset_name)
-  SaveSeuratRds(counts, file.path("rds", destfile))
+function(dataset_name, sys.user_id, req, res) {
+  seurat_obj <- readRDS(paste0("./", dataset_name, ".rds"))
+  SaveSeuratRds(seurat_obj, file = file.path("rds", paste0(sys.user_id, ".RDS")))
+  print("dataset_name")
 }
 
 #* @post /qcplot
@@ -261,4 +261,3 @@ annotation_sctype_tsne <- function(tissue, title, sys.user_id, res){
 
     list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
 }
-# download
