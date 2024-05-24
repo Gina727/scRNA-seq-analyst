@@ -104,9 +104,10 @@ qcplot <- function(sys.user_id, req, res){
 
   d <- VlnPlot(seurat_obj, features = c("nFeature_RNA", "percent.mt"), ncol = 2, pt.size = 0.1)
   graph_name = paste0(sys.user_id,"-vlnplot",".png")
-  ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
-
-  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
+  ggsave(filename = file.path("images", paste0(graph_name, formatted_time)), plot = d, width = 10, height = 10, dpi = 300)
+  time <- Sys.time()
+  formatted_time <- format(time,  format = "-%Y-%m-%d-%H%M%S")
+  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", paste0(graph_name, formatted_time)), type = "image", status = TRUE))
 }
 
 #* @post /qc
@@ -143,12 +144,14 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, sys.user
 
   d <- ElbowPlot(object = seurat_obj, ndims = 40)
   graph_name = paste0(sys.user_id, "-elbowplot",".png")
-  ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
+  ggsave(filename = file.path("images", paste0(graph_name, formatted_time)), plot = d, width = 10, height = 10, dpi = 300)
+  time <- Sys.time()
+  formatted_time <- format(time,  format = "-%Y-%m-%d-%H%M%S")
 
   file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
   SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
 
-  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
+  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", paste0(graph_name, formatted_time)), type = "image", status = TRUE))
 }
 
 #* @post /clustering_umap
@@ -218,9 +221,10 @@ annotation_sctype_umap <- function(tissue, title, sys.user_id, res){
 
     d <- DimPlot(seurat_obj, reduction = "umap", label = TRUE, repel = TRUE, group.by = 'customclassif')+ggtitle(title)
     graph_name = paste0(sys.user_id,"-annotation_umap",".png")
-    ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
-
-    list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
+    ggsave(filename = file.path("images", paste0(graph_name, formatted_time)), plot = d, width = 10, height = 10, dpi = 300)
+    time <- Sys.time()
+    formatted_time <- format(time,  format = "-%Y-%m-%d-%H%M%S")
+    list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", paste0(graph_name, formatted_time)), type = "image", status = TRUE))
 }
 
 #* annotation_sctype_tsne
@@ -257,8 +261,8 @@ annotation_sctype_tsne <- function(tissue, title, sys.user_id, res){
 
     b <- TSNEPlot(seurat_obj, group.by = 'customclassif')+ggtitle(title)
     graph_name = paste0(sys.user_id,"-annotation_tsne",".png")
-    ggsave(filename = file.path("images", graph_name), plot = d, width = 10, height = 10, dpi = 300)
-
-    list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", graph_name), type = "image", status = TRUE))
+      ggsave(filename = file.path("images", paste0(graph_name, formatted_time)), plot = d, width = 10, height = 10, dpi = 300)
+  time <- Sys.time()
+  formatted_time <- format(time,  format = "-%Y-%m-%d-%H%M%S")
+  list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", paste0(graph_name, formatted_time)), type = "image", status = TRUE))
 }
-# download
