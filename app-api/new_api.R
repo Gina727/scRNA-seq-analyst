@@ -25,6 +25,8 @@ library(plumber)
 uploaded_file <- NULL 
 destfile <- NULL
 key <- NULL
+formatted_time <- NULL
+time <- NULL
 
 
 #* @get /check_files
