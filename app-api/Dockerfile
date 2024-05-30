@@ -13,6 +13,7 @@ RUN R -e "install.packages(c('openxlsx'))"
 RUN R -e "remotes::install_github('mojaveazure/seurat-disk')"
 
 RUN R -e "devtools::install_github('satijalab/seurat-data')"
+RUN R -e "install.packages(c('HGNChelper'))"
 COPY / / 
 
 EXPOSE 8000
