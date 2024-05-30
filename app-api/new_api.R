@@ -10,6 +10,7 @@ library(plumber)
   library(ggplot2)
   library(openxlsx)
   library(SeuratData)
+  library(HGNChelper)
   # default_dataset_list = list("pbmc3k", "panc8", "kidneyref", "adiposeref", "lungref")
   # for (dataset in default_dataset_list) {
   #    if (dataset %in% AvailableData() == FALSE){
@@ -148,7 +149,7 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, sys.user
   graph_name = paste0(sys.user_id, "-elbowplot")
   file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
   SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
-  
+
   time <- Sys.time()
   formatted_time <- format(time,  format = "-%Y-%m-%d-%H%M%S")
   ggsave(filename = file.path("images", paste0(graph_name, formatted_time, ".png")), plot = d, width = 10, height = 10, dpi = 300)
