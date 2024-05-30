@@ -146,13 +146,13 @@ norm_pca <- function(scaling_factor, num_hvgs, norm_method, hvg_method, sys.user
 
   d <- ElbowPlot(object = seurat_obj, ndims = 40)
   graph_name = paste0(sys.user_id, "-elbowplot")
+  file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
+  SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
+  
   time <- Sys.time()
   formatted_time <- format(time,  format = "-%Y-%m-%d-%H%M%S")
   ggsave(filename = file.path("images", paste0(graph_name, formatted_time, ".png")), plot = d, width = 10, height = 10, dpi = 300)
   list(success = TRUE, message = list(chat_history = array(), content = paste0("http://scrna.m2mda.com/images/", paste0(graph_name, formatted_time, ".png")), type = "image", status = TRUE))
-
-  file_name <- paste0(sys.user_id,"-norm_pca", '.RDS')
-  SaveSeuratRds(seurat_obj, file = file.path("rds", file_name))
 }
 
 #* @post /clustering_umap
