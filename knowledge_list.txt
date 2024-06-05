@@ -1,0 +1,19 @@
+Knowledge List
+Sequencing:
+Jovic, D., Liang, X., Zeng, H., Lin, L., Xu, F., & Luo, Y. (2022). Single-cell RNA sequencing technologies and applications: A brief overview. Clinical and Translational Medicine, 12(3), e694. DOI: 10.1002/ctm2.694
+Kukurba, K. R., & Montgomery, S. B. (2015). RNA Sequencing and Analysis. Cold Spring Harbor Protocols, 2015(11), 951-969. DOI: 10.1101/pdb.top084970
+
+scType annotation:
+Ianevski, A., Giri, A. K., & Aittokallio, T. (2022). Fully-automated and ultra-fast cell-type identification using specific marker combinations from single-cell transcriptomic data. Nature Communications, 13, 1246. DOI: 10.1038/s41467-022-28803-w
+
+Automatic/ web-based:
+Yu, H., Wang, Y., Zhang, X., & Wang, Z. (2023). GRACE: A comprehensive web-based platform for integrative single-cell transcriptome analysis. NAR Genomics and Bioinformatics, 5(2), lqad050. DOI: 10.1093/nargab/lqad050
+Abdelaal, T., Michielsen, L., Cats, D., et al. (2019). A comparison of automatic cell identification methods for single-cell RNA sequencing data. Genome Biology, 20, 194. DOI: 10.1186/s13059-019-1795-z
+
+General questions:
+Luecken, M. D., & Theis, F. J. (2019). Molecular Systems Biology, 15(6), e8746. DOI: 10.15252/msb.20188746
+Andrews, T. S., Kiselev, V. Y., McCarthy, D., et al. (2021). Nature Protocols, 16, 1–9. DOI: 10.1038/s41596-020-00409-w
+Koch, C. M., Chiu, S. F., Akbarpour, M., Bharat, A., Ridge, K. M., Bartom, E. T., & Winter, D. R. (2018). American Journal of Respiratory Cell and Molecular Biology, 59(2), 145-157. DOI: 10.1165/rcmb.2017-0430TR
+
+Mitochondrial genes:
+Osorio, D., & Cai, J. J. (2021). Systematic determination of the mitochondrial proportion in human and mice tissues for single-cell RNA-sequencing data quality control. Bioinformatics, 37(7), 963-967. DOI: 10.1093/bioinformatics/btaa751
