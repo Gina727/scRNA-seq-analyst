@@ -31,7 +31,8 @@ This application is supported by and published on Dify platform. Users might acc
 To clone and run this application, you'll need [Dify](http://dify.docai.net/apps) for GPT agent and [R](https://www.r-project.org/) for writing R code and build API installed on your server.
 
 Part One. Build your server
-1. On your server or computer, enter command lines:
+1. Connect to your server through SSH applications like PuTTY.
+2. Enter command lines on your server:
 ```bash
 # Clone this repository
 $ git clone https://github.com/Gina727/scRNA-seq-analyst
