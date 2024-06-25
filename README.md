@@ -40,8 +40,12 @@ $ git clone https://github.com/Gina727/scRNA-seq-analyst
 $ cd scRNA-seq-analyst
 ```
 2. Build the image of app-api
-$ docker build new-api .
-$ docker compose up
+```bash
+$ docker build -t new-api .
+$ docker compose up -d
+```
+You may use $ docker ps to check for running containers.
+
 3. Open "http://your-server's-address:8000/openapi.json"
 4. Copy the content of the webpage.
 
