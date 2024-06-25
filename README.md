@@ -46,8 +46,13 @@ $ docker build -t new-api .
 $ docker compose up -d
 ```
 You may use $ docker ps to check for running containers.
-3. Open "http://your-server's-address:8000/openapi.json"
-4. Copy the content of the webpage.
+3. Add /rds and /images folders
+```bash
+$ mkdir /scRNA-seq-analyst/app-api/rds
+$ mkdir /scRNA-seq-analyst/app-api/images
+```
+4. Open "http://your-server's-address:8000/openapi.json"
+5. Copy the content of the webpage.
 
 Part Two. Build your agent
 1. Register on Dify
