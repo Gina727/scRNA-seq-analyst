@@ -47,14 +47,15 @@ $ docker compose up -d
 ```
 You may use $ docker ps to check for running containers.
 
-3. Open "http://your-server's-address:8000/openapi.json"
-4. Copy the content of the webpage.
+3. Add folders, rds and im
+4. Open "http://your-server's-address:8000/openapi.json"
+5. Copy the content of the webpage.
 
 Part Two. Build your agent
 1. Register on Dify
 2. Create an agent
-3. Enter the prompt from this repository
-4. Load papers in .pdf file from the knowledge list provided to the "Knowledge" section.
+3. Enter the prompt from this repository: https://github.com/Gina727/scRNA-seq-analyst/blob/main/prompt.txt
+4. Load papers in .pdf file from the knowledge list: https://github.com/Gina727/scRNA-seq-analyst/blob/main/knowledge_list.txt to the "Knowledge" section.
 5. Go to Tools section. Create new API tools by pasting the openapi.json in the corresponding section.
 6. Done!
 
