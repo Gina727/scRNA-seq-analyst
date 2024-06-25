@@ -46,10 +46,8 @@ $ docker build -t new-api .
 $ docker compose up -d
 ```
 You may use $ docker ps to check for running containers.
-
-3. Add folders, rds and im
-4. Open "http://your-server's-address:8000/openapi.json"
-5. Copy the content of the webpage.
+3. Open "http://your-server's-address:8000/openapi.json"
+4. Copy the content of the webpage.
 
 Part Two. Build your agent
 1. Register on Dify
