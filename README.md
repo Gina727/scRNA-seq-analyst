@@ -53,7 +53,7 @@ Part Two. Build your agent
 5. Go to Tools section. Create new API tools by pasting the openapi.json in the corresponding section.
 6. Done!
 
-You may edit the "new-api.R" R script to add new functions.
+You may edit the "new_api.R" R script to add new functions.
 
 ## Credits
 
