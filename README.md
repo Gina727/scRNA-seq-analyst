@@ -42,7 +42,7 @@ $ cd scRNA-seq-analyst
 2. Build the image of app-api
 $ docker build new-api .
 $ docker compose up
-3. Open "http://your server's address:8000/openapi.json"
+3. Open "http://your-server's-address:8000/openapi.json"
 4. Copy the content of the webpage.
 
 Part Two. Build your agent
