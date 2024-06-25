@@ -12,6 +12,7 @@
 <p align="center">
   <a href="#key-features">Key Features</a> •
   <a href="#how-to-use">How To Use</a> •
+  <a href="#how-to-use">Limitations</a> •
   <a href="#credits">Credits</a> •
   <a href="#related">Related</a> •
   <a href="#license">License</a>
@@ -63,6 +64,13 @@ Part Two. Build your agent
 6. Done!
 
 You may edit the "new_api.R" R script to add new functions.
+
+## Limitations
+Despite the potential of the agent, it is undeniable that this agent has some limitations. Uploading the
+files is restricted to using url and there are less function to choose from. So far, the Dify platform does
+not allow users to directly upload their files in the chat. This may increase inconvenience when using
+this platform to perform analysis. Additionally, the agent sometimes misunderstood the commands of
+the user, inhibiting the ease of use.
 
 ## Credits
 
