@@ -36,7 +36,7 @@ Part One. Build your server
 2. Enter command lines on your server:
 ```bash
 # Clone this repository
-$ git clone https://github.com/Gina727/scRNA-seq-analyst
+$ git clone https://github.com/Gina727/scRNA-seq-analyst.git
 
 # Go into the repository
 $ cd scRNA-seq-analyst
